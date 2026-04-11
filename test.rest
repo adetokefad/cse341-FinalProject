@@ -1,0 +1,323 @@
+### ==================== AUTH ====================
+
+### Check auth status
+GET http://localhost:3000/auth/status
+
+### ==================== MOVIES ====================
+
+### Get all movies
+GET http://localhost:3000/movies
+
+### Get single movie by ID
+GET http://localhost:3000/movies/69daaa304a8a05bef59637b8
+
+### Create movie 1 (protected)
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "Inception",
+  "genre": "Sci-Fi",
+  "director": "Christopher Nolan",
+  "releaseYear": 2010,
+  "runtime": 148,
+  "language": "English",
+  "synopsis": "A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
+  "posterUrl": "https://example.com/inception.jpg"
+}
+
+### Create movie 2 (protected)
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "The Dark Knight",
+  "genre": "Action",
+  "director": "Christopher Nolan",
+  "releaseYear": 2008,
+  "runtime": 152,
+  "language": "English",
+  "synopsis": "When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.",
+  "posterUrl": "https://example.com/darkknight.jpg"
+}
+
+### Create movie 3 (protected)
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "Interstellar",
+  "genre": "Sci-Fi",
+  "director": "Christopher Nolan",
+  "releaseYear": 2014,
+  "runtime": 169,
+  "language": "English",
+  "synopsis": "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+  "posterUrl": "https://example.com/interstellar.jpg"
+}
+
+### Create movie 4 (protected)
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "The Godfather",
+  "genre": "Crime",
+  "director": "Francis Ford Coppola",
+  "releaseYear": 1972,
+  "runtime": 175,
+  "language": "English",
+  "synopsis": "The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.",
+  "posterUrl": "https://example.com/godfather.jpg"
+}
+
+### Create movie 5 (protected)
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "Parasite",
+  "genre": "Thriller",
+  "director": "Bong Joon-ho",
+  "releaseYear": 2019,
+  "runtime": 132,
+  "language": "Korean",
+  "synopsis": "Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
+  "posterUrl": "https://example.com/parasite.jpg"
+}
+
+### Create movie 6 (protected)
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "The Shawshank Redemption",
+  "genre": "Drama",
+  "director": "Frank Darabont",
+  "releaseYear": 1994,
+  "runtime": 142,
+  "language": "English",
+  "synopsis": "Two imprisoned men bond over a number of years, finding solace and eventual redemption through acts of common decency.",
+  "posterUrl": "https://example.com/shawshank.jpg"
+}
+
+### Create movie 7 (protected)
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "Spirited Away",
+  "genre": "Animation",
+  "director": "Hayao Miyazaki",
+  "releaseYear": 2001,
+  "runtime": 125,
+  "language": "Japanese",
+  "synopsis": "During her family's move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits.",
+  "posterUrl": "https://example.com/spiritedaway.jpg"
+}
+
+### Create movie 8 (protected)
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "Pulp Fiction",
+  "genre": "Crime",
+  "director": "Quentin Tarantino",
+  "releaseYear": 1994,
+  "runtime": 154,
+  "language": "English",
+  "synopsis": "The lives of two mob hitmen, a boxer, a gangster and his wife intertwine in four tales of violence and redemption.",
+  "posterUrl": "https://example.com/pulpfiction.jpg"
+}
+
+### Update a movie (protected)
+PUT http://localhost:3000/movies/69daaa304a8a05bef59637b8
+Content-Type: application/json
+
+{
+  "title": "Inception",
+  "genre": "Sci-Fi",
+  "director": "Christopher Nolan",
+  "releaseYear": 2010,
+  "runtime": 148,
+  "language": "English",
+  "synopsis": "Updated synopsis for Inception.",
+  "posterUrl": "https://example.com/inception-updated.jpg"
+}
+
+### Delete a movie (protected)
+DELETE http://localhost:3000/movies/69daaa6f4a8a05bef59637bf
+
+### Test validation - missing fields
+POST http://localhost:3000/movies
+Content-Type: application/json
+
+{
+  "title": "Incomplete Movie"
+}
+
+### ==================== REVIEWS ====================
+
+### Get all reviews
+GET http://localhost:3000/reviews
+
+### Get single review by ID
+GET http://localhost:3000/reviews/69dab650456a17377d1433ff
+
+### Create review 1 (protected)
+POST http://localhost:3000/reviews
+Content-Type: application/json
+
+{
+  "movieId": "69daaa304a8a05bef59637b8",
+  "userId": "182170968",
+  "rating": 9,
+  "reviewText": "An absolutely mind-bending masterpiece! Christopher Nolan at his finest."
+}
+
+### Create review 2 (protected)
+POST http://localhost:3000/reviews
+Content-Type: application/json
+
+{
+  "movieId": "69daaa384a8a05bef59637b9",
+  "userId": "182170968",
+  "rating": 10,
+  "reviewText": "One of the greatest films ever made. A timeless classic."
+}
+
+### Create review 3 (protected)
+POST http://localhost:3000/reviews
+Content-Type: application/json
+
+{
+  "movieId": "69daaa464a8a05bef59637ba",
+  "userId": "182170968",
+  "rating": 8,
+  "reviewText": "A visually stunning and emotionally powerful film."
+}
+
+### Update a review (protected)
+PUT http://localhost:3000/reviews/69dab650456a17377d1433ff
+Content-Type: application/json
+
+{
+  "movieId": "69daaa304a8a05bef59637b8",
+  "userId": "182170968",
+  "rating": 10,
+  "reviewText": "Updated review - even better on second watch!"
+}
+
+### Delete duplicate review
+DELETE http://localhost:3000/reviews/69dab8eb456a17377d143402
+
+### Delete a review (protected)
+DELETE http://localhost:3000/reviews/69dab8dc456a17377d143401
+
+### Test validation - invalid rating
+POST http://localhost:3000/reviews
+Content-Type: application/json
+
+{
+  "movieId": "69daaa304a8a05bef59637b8",
+  "userId": "182170968",
+  "rating": 15,
+  "reviewText": "This rating is out of range"
+}
+
+### ==================== WATCHLISTS ====================
+
+### Get all watchlists (protected)
+GET http://localhost:3000/watchlists
+
+### Get single watchlist by ID (protected)
+GET http://localhost:3000/watchlists/69dab906456a17377d143403
+
+### Create watchlist 1 (protected)
+POST http://localhost:3000/watchlists
+Content-Type: application/json
+
+{
+  "name": "Watch Later",
+  "userId": "182170968",
+  "movieIds": ["69daaa304a8a05bef59637b8", "69daaa384a8a05bef59637b9"]
+}
+
+### Create watchlist 2 (protected)
+POST http://localhost:3000/watchlists
+Content-Type: application/json
+
+{
+  "name": "Favorites",
+  "userId": "182170968",
+  "movieIds": ["69daaa464a8a05bef59637ba", "69daaa4b4a8a05bef59637bb"]
+}
+
+### Create watchlist 3 (protected)
+POST http://localhost:3000/watchlists
+Content-Type: application/json
+
+{
+  "name": "Top Picks",
+  "userId": "182170968",
+  "movieIds": ["69daaa534a8a05bef59637bc", "69daaa584a8a05bef59637bd"]
+}
+
+### Update a watchlist (protected)
+PUT http://localhost:3000/watchlists/69dab906456a17377d143403
+Content-Type: application/json
+
+{
+  "name": "Updated Watch Later",
+  "userId": "182170968",
+  "movieIds": ["69daaa304a8a05bef59637b8", "69daaa464a8a05bef59637ba"]
+}
+
+### Delete a watchlist (protected)
+DELETE http://localhost:3000/watchlists/69dab91f456a17377d143405
+
+### Test validation - missing fields
+POST http://localhost:3000/watchlists
+Content-Type: application/json
+
+{
+  "name": "Incomplete Watchlist"
+}
+
+### ==================== USERS ====================
+
+### Get all users
+GET http://localhost:3000/users
+
+### Get single user by ID
+GET http://localhost:3000/users/replace_with_user_id
+
+### Update a user (protected)
+PUT http://localhost:3000/users/replace_with_user_id
+Content-Type: application/json
+
+{
+  "displayName": "Adetoke",
+  "email": "adetoke@example.com"
+}
+
+### Create a user
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "displayName": "Adetoke",
+  "email": "adetoke@example.com"
+}
+
+### Delete a user (protected)
+DELETE http://localhost:3000/users/replace_with_user_id
+
+### Test validation - missing field
+PUT http://localhost:3000/users/replace_with_user_id
+Content-Type: application/json
+
+{
+  "displayName": "Missing Email"
+}
