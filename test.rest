@@ -163,7 +163,7 @@ Content-Type: application/json
 GET http://localhost:3000/reviews
 
 ### Get single review by ID
-GET http://localhost:3000/reviews/69dab650456a17377d1433ff
+GET http://localhost:3000/reviews/69daaa304a8a05bef59637b8
 
 ### Create review 1 (protected)
 POST http://localhost:3000/reviews
@@ -199,7 +199,7 @@ Content-Type: application/json
 }
 
 ### Update a review (protected)
-PUT http://localhost:3000/reviews/69dab650456a17377d1433ff
+PUT http://localhost:3000/reviews/69daaa304a8a05bef59637b8
 Content-Type: application/json
 
 {
@@ -209,11 +209,8 @@ Content-Type: application/json
   "reviewText": "Updated review - even better on second watch!"
 }
 
-### Delete duplicate review
-DELETE http://localhost:3000/reviews/69dab8eb456a17377d143402
-
 ### Delete a review (protected)
-DELETE http://localhost:3000/reviews/69dab8dc456a17377d143401
+DELETE http://localhost:3000/reviews/69daaa304a8a05bef59637b8
 
 ### Test validation - invalid rating
 POST http://localhost:3000/reviews

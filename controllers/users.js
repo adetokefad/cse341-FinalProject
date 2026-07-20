@@ -1,4 +1,5 @@
 const { getDB } = require("../db/connection");
+const userSchema = require("../validators/userValidator");
 const { ObjectId } = require("mongodb");
 
 const getAllUsers = async (req, res) => {

@@ -1,4 +1,5 @@
 const { getDB } = require("../db/connection");
+const reviewSchema = require("../validators/reviewValidator");
 const { ObjectId } = require("mongodb");
 
 const getAllReviews = async (req, res) => {

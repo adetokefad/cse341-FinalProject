@@ -1,4 +1,5 @@
 const { getDB } = require("../db/connection");
+const watchlistSchema = require("../validators/watchlistValidator");
 const { ObjectId } = require("mongodb");
 
 const getAllWatchlists = async (req, res) => {

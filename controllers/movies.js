@@ -1,4 +1,5 @@
 const { getDB } = require("../db/connection");
+const movieSchema = require("../validators/movieValidator");
 const { ObjectId } = require("mongodb");
 
 const getAllMovies = async (req, res) => {
@@ -57,12 +58,10 @@ const createMovie = async (req, res) => {
       !synopsis ||
       !posterUrl
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "All fields are required: title, genre, director, releaseYear, runtime, language, synopsis, posterUrl",
-        });
+      return res.status(400).json({
+        message:
+          "All fields are required: title, genre, director, releaseYear, runtime, language, synopsis, posterUrl",
+      });
     }
 
     const db = getDB();
@@ -109,30 +108,26 @@ const updateMovie = async (req, res) => {
       !synopsis ||
       !posterUrl
     ) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "All fields are required: title, genre, director, releaseYear, runtime, language, synopsis, posterUrl",
-        });
+      return res.status(400).json({
+        message:
+          "All fields are required: title, genre, director, releaseYear, runtime, language, synopsis, posterUrl",
+      });
     }
 
     const db = getDB();
-    const result = await db
-      .collection("movies")
-      .replaceOne(
-        { _id: new ObjectId(req.params.id) },
-        {
-          title,
-          genre,
-          director,
-          releaseYear,
-          runtime,
-          language,
-          synopsis,
-          posterUrl,
-        },
-      );
+    const result = await db.collection("movies").replaceOne(
+      { _id: new ObjectId(req.params.id) },
+      {
+        title,
+        genre,
+        director,
+        releaseYear,
+        runtime,
+        language,
+        synopsis,
+        posterUrl,
+      },
+    );
     if (result.modifiedCount === 0)
       return res.status(404).json({ message: "Movie not found" });
     res.status(204).send();
