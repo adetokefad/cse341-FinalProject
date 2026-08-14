@@ -1,3 +1,4 @@
+const validateObjectId = require("../utils/validateObjectId");
 const { getDB } = require("../db/connection");
 const reviewSchema = require("../validators/reviewValidator");
 const { ObjectId } = require("mongodb");
@@ -37,33 +38,33 @@ const createReview = async (req, res) => {
   // #swagger.summary = 'Create a new review'
   // #swagger.description = 'Creates a new review in the database'
   try {
-    const { movieId, userId, rating, reviewText } = req.body;
+    const { error, value } = reviewSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
-    if (!movieId || !userId || !rating || !reviewText) {
+    if (error) {
       return res.status(400).json({
-        message: "All fields are required: movieId, userId, rating, reviewText",
+        message: "Validation error",
+        details: error.details.map((detail) => detail.message),
       });
     }
 
-    if (rating < 1 || rating > 10) {
-      return res
-        .status(400)
-        .json({ message: "Rating must be between 1 and 10" });
-    }
-
     const db = getDB();
+
     const result = await db.collection("reviews").insertOne({
-      movieId,
-      userId,
-      rating,
-      reviewText,
+      ...value,
       createdAt: new Date(),
     });
-    res.status(201).json({ id: result.insertedId });
+
+    res.status(201).json({
+      message: "Review created successfully",
+      id: result.insertedId,
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error creating review", error: err.message });
+    res.status(500).json({
+      message: "Error creating review",
+      error: err.message,
+    });
   }
 };
 
@@ -71,34 +72,41 @@ const updateReview = async (req, res) => {
   // #swagger.summary = 'Update a review'
   // #swagger.description = 'Updates an existing review by ID'
   try {
-    const { movieId, userId, rating, reviewText } = req.body;
+    const { error, value } = reviewSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
-    if (!movieId || !userId || !rating || !reviewText) {
+    if (error) {
       return res.status(400).json({
-        message: "All fields are required: movieId, userId, rating, reviewText",
+        message: "Validation error",
+        details: error.details.map((detail) => detail.message),
       });
     }
 
-    if (rating < 1 || rating > 10) {
-      return res
-        .status(400)
-        .json({ message: "Rating must be between 1 and 10" });
+    const db = getDB();
+
+    const result = await db.collection("reviews").replaceOne(
+      { _id: new ObjectId(req.params.id) },
+      {
+        ...value,
+        updatedAt: new Date(),
+      },
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        message: "Review not found",
+      });
     }
 
-    const db = getDB();
-    const result = await db
-      .collection("reviews")
-      .replaceOne(
-        { _id: new ObjectId(req.params.id) },
-        { movieId, userId, rating, reviewText, updatedAt: new Date() },
-      );
-    if (result.modifiedCount === 0)
-      return res.status(404).json({ message: "Review not found" });
-    res.status(204).send();
+    res.status(200).json({
+      message: "Review updated successfully",
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error updating review", error: err.message });
+    res.status(500).json({
+      message: "Error updating review",
+      error: err.message,
+    });
   }
 };
 

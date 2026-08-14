@@ -1,12 +1,16 @@
 const express = require("express");
-const router = express.Router();
-const moviesController = require("../controllers/movies");
+const reviewsController = require("../controllers/reviews");
 const isAuthenticated = require("../middleware/isAuthenticated");
 
-router.get("/", moviesController.getAllMovies);
-router.get("/:id", moviesController.getMovieById);
-router.post("/", isAuthenticated, moviesController.createMovie);
-router.put("/:id", isAuthenticated, moviesController.updateMovie);
-router.delete("/:id", isAuthenticated, moviesController.deleteMovie);
+const router = express.Router();
+
+// Public GET routes
+router.get("/", reviewsController.getAllReviews);
+router.get("/:id", reviewsController.getReviewById);
+
+// Protected write routes
+router.post("/", isAuthenticated, reviewsController.createReview);
+router.put("/:id", isAuthenticated, reviewsController.updateReview);
+router.delete("/:id", isAuthenticated, reviewsController.deleteReview);
 
 module.exports = router;

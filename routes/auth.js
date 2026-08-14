@@ -1,37 +1,60 @@
 const express = require("express");
-const router = express.Router();
-const passport = require("passport");
+const passport = require("../config/passport");
 
-// Login with GitHub
+const router = express.Router();
+
 router.get(
   "/github",
-  passport.authenticate("github", { scope: ["user:email"] }),
+  passport.authenticate("github", {
+    scope: ["user:email"],
+  }),
 );
 
-// GitHub callback
 router.get(
   "/github/callback",
-  passport.authenticate("github", { failureRedirect: "/" }),
+  passport.authenticate("github", {
+    failureRedirect: "/api-docs",
+  }),
   (req, res) => {
-    res.redirect("/api-docs/");
+    res.json({
+      success: true,
+      message: "Authentication successful",
+      user: req.user,
+    });
   },
 );
 
-// Logout
-router.get("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) return res.status(500).json({ message: "Error logging out" });
-    res.redirect("/");
+router.get("/status", (req, res) => {
+  if (req.isAuthenticated()) {
+    return res.status(200).json({
+      authenticated: true,
+      user: req.user,
+    });
+  }
+
+  res.status(401).json({
+    authenticated: false,
+    message: "Not authenticated",
   });
 });
 
-// Check if logged in
-router.get("/status", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.status(200).json({ loggedIn: true, user: req.user });
-  } else {
-    res.status(200).json({ loggedIn: false });
-  }
+router.get("/logout", (req, res, next) => {
+  req.logout((error) => {
+    if (error) {
+      return next(error);
+    }
+
+    req.session.destroy((sessionError) => {
+      if (sessionError) {
+        return next(sessionError);
+      }
+
+      res.json({
+        success: true,
+        message: "Logged out successfully",
+      });
+    });
+  });
 });
 
 module.exports = router;

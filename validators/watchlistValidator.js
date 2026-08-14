@@ -1,8 +1,8 @@
 const Joi = require("joi");
 
-const watchlistSchema = Joi.object({
-  userId: Joi.string().required(),
-  movies: Joi.array().items(Joi.string()).required(),
+const userSchema = Joi.object({
+  displayName: Joi.string().trim().required(),
+  email: Joi.string().email().required(),
 });
 
-module.exports = watchlistSchema;
+module.exports = userSchema;

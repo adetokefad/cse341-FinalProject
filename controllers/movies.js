@@ -1,3 +1,4 @@
+const validateObjectId = require("../utils/validateObjectId");
 const { getDB } = require("../db/connection");
 const movieSchema = require("../validators/movieValidator");
 const { ObjectId } = require("mongodb");
@@ -37,49 +38,32 @@ const createMovie = async (req, res) => {
   // #swagger.summary = 'Create a new movie'
   // #swagger.description = 'Creates a new movie in the database'
   try {
-    const {
-      title,
-      genre,
-      director,
-      releaseYear,
-      runtime,
-      language,
-      synopsis,
-      posterUrl,
-    } = req.body;
+    const { error, value } = movieSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
-    if (
-      !title ||
-      !genre ||
-      !director ||
-      !releaseYear ||
-      !runtime ||
-      !language ||
-      !synopsis ||
-      !posterUrl
-    ) {
+    if (error) {
       return res.status(400).json({
-        message:
-          "All fields are required: title, genre, director, releaseYear, runtime, language, synopsis, posterUrl",
+        message: "Validation error",
+        details: error.details.map((detail) => detail.message),
       });
     }
 
     const db = getDB();
+
     const result = await db.collection("movies").insertOne({
-      title,
-      genre,
-      director,
-      releaseYear,
-      runtime,
-      language,
-      synopsis,
-      posterUrl,
+      ...value,
     });
-    res.status(201).json({ id: result.insertedId });
+
+    res.status(201).json({
+      message: "Movie created successfully",
+      id: result.insertedId,
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error creating movie", error: err.message });
+    res.status(500).json({
+      message: "Error creating movie",
+      error: err.message,
+    });
   }
 };
 
@@ -87,54 +71,40 @@ const updateMovie = async (req, res) => {
   // #swagger.summary = 'Update a movie'
   // #swagger.description = 'Updates an existing movie by ID'
   try {
-    const {
-      title,
-      genre,
-      director,
-      releaseYear,
-      runtime,
-      language,
-      synopsis,
-      posterUrl,
-    } = req.body;
+    const { error, value } = movieSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
-    if (
-      !title ||
-      !genre ||
-      !director ||
-      !releaseYear ||
-      !runtime ||
-      !language ||
-      !synopsis ||
-      !posterUrl
-    ) {
+    if (error) {
       return res.status(400).json({
-        message:
-          "All fields are required: title, genre, director, releaseYear, runtime, language, synopsis, posterUrl",
+        message: "Validation error",
+        details: error.details.map((detail) => detail.message),
       });
     }
 
     const db = getDB();
+
     const result = await db.collection("movies").replaceOne(
       { _id: new ObjectId(req.params.id) },
       {
-        title,
-        genre,
-        director,
-        releaseYear,
-        runtime,
-        language,
-        synopsis,
-        posterUrl,
+        ...value,
       },
     );
-    if (result.modifiedCount === 0)
-      return res.status(404).json({ message: "Movie not found" });
-    res.status(204).send();
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        message: "Movie not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Movie updated successfully",
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error updating movie", error: err.message });
+    res.status(500).json({
+      message: "Error updating movie",
+      error: err.message,
+    });
   }
 };
 

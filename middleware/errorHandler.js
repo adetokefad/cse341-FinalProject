@@ -1,15 +1,12 @@
-const { ObjectId } = require("mongodb");
-
-function validateObjectId(req, res, next) {
-  if (req.params.id && !ObjectId.isValid(req.params.id)) {
-    return res.status(400).json({ error: "Invalid ID format" });
-  }
-  next();
-}
-
-function errorHandler(err, req, res, next) {
+const errorHandler = (err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ error: "Internal Server Error" });
-}
 
-module.exports = { validateObjectId, errorHandler };
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || "Internal server error",
+  });
+};
+
+module.exports = errorHandler;

@@ -1,3 +1,4 @@
+const validateObjectId = require("../utils/validateObjectId");
 const { getDB } = require("../db/connection");
 const userSchema = require("../validators/userValidator");
 const { ObjectId } = require("mongodb");
@@ -37,28 +38,41 @@ const updateUser = async (req, res) => {
   // #swagger.summary = 'Update a user'
   // #swagger.description = 'Updates an existing user by ID'
   try {
-    const { displayName, email } = req.body;
+    const { error, value } = userSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
-    if (!displayName || !email) {
-      return res
-        .status(400)
-        .json({ message: "All fields are required: displayName, email" });
+    if (error) {
+      return res.status(400).json({
+        message: "Validation error",
+        details: error.details.map((detail) => detail.message),
+      });
     }
 
     const db = getDB();
-    const result = await db
-      .collection("users")
-      .replaceOne(
-        { _id: new ObjectId(req.params.id) },
-        { displayName, email, updatedAt: new Date() },
-      );
-    if (result.modifiedCount === 0)
-      return res.status(404).json({ message: "User not found" });
-    res.status(204).send();
+
+    const result = await db.collection("users").replaceOne(
+      { _id: new ObjectId(req.params.id) },
+      {
+        ...value,
+        updatedAt: new Date(),
+      },
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "User updated successfully",
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error updating user", error: err.message });
+    res.status(500).json({
+      message: "Error updating user",
+      error: err.message,
+    });
   }
 };
 
@@ -84,23 +98,33 @@ const createUser = async (req, res) => {
   // #swagger.summary = 'Create a new user'
   // #swagger.description = 'Creates a new user in the database'
   try {
-    const { displayName, email } = req.body;
-    if (!displayName || !email) {
-      return res
-        .status(400)
-        .json({ message: "All fields are required: displayName, email" });
+    const { error, value } = userSchema.validate(req.body, {
+      abortEarly: false,
+    });
+
+    if (error) {
+      return res.status(400).json({
+        message: "Validation error",
+        details: error.details.map((detail) => detail.message),
+      });
     }
+
     const db = getDB();
+
     const result = await db.collection("users").insertOne({
-      displayName,
-      email,
+      ...value,
       createdAt: new Date(),
     });
-    res.status(201).json({ id: result.insertedId });
+
+    res.status(201).json({
+      message: "User created successfully",
+      id: result.insertedId,
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error creating user", error: err.message });
+    res.status(500).json({
+      message: "Error creating user",
+      error: err.message,
+    });
   }
 };
 

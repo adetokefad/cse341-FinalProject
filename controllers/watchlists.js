@@ -1,3 +1,4 @@
+const validateObjectId = require("../utils/validateObjectId");
 const { getDB } = require("../db/connection");
 const watchlistSchema = require("../validators/watchlistValidator");
 const { ObjectId } = require("mongodb");
@@ -38,30 +39,33 @@ const createWatchlist = async (req, res) => {
   // #swagger.summary = 'Create a new watchlist'
   // #swagger.description = 'Creates a new watchlist in the database'
   try {
-    const { name, userId, movieIds } = req.body;
+    const { error, value } = watchlistSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
-    if (!name || !userId || !movieIds) {
-      return res
-        .status(400)
-        .json({ message: "All fields are required: name, userId, movieIds" });
-    }
-
-    if (!Array.isArray(movieIds)) {
-      return res.status(400).json({ message: "movieIds must be an array" });
+    if (error) {
+      return res.status(400).json({
+        message: "Validation error",
+        details: error.details.map((detail) => detail.message),
+      });
     }
 
     const db = getDB();
+
     const result = await db.collection("watchlists").insertOne({
-      name,
-      userId,
-      movieIds,
+      ...value,
       createdAt: new Date(),
     });
-    res.status(201).json({ id: result.insertedId });
+
+    res.status(201).json({
+      message: "Watchlist created successfully",
+      id: result.insertedId,
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error creating watchlist", error: err.message });
+    res.status(500).json({
+      message: "Error creating watchlist",
+      error: err.message,
+    });
   }
 };
 
@@ -69,32 +73,41 @@ const updateWatchlist = async (req, res) => {
   // #swagger.summary = 'Update a watchlist'
   // #swagger.description = 'Updates an existing watchlist by ID'
   try {
-    const { name, userId, movieIds } = req.body;
+    const { error, value } = watchlistSchema.validate(req.body, {
+      abortEarly: false,
+    });
 
-    if (!name || !userId || !movieIds) {
-      return res
-        .status(400)
-        .json({ message: "All fields are required: name, userId, movieIds" });
-    }
-
-    if (!Array.isArray(movieIds)) {
-      return res.status(400).json({ message: "movieIds must be an array" });
+    if (error) {
+      return res.status(400).json({
+        message: "Validation error",
+        details: error.details.map((detail) => detail.message),
+      });
     }
 
     const db = getDB();
-    const result = await db
-      .collection("watchlists")
-      .replaceOne(
-        { _id: new ObjectId(req.params.id) },
-        { name, userId, movieIds, updatedAt: new Date() },
-      );
-    if (result.modifiedCount === 0)
-      return res.status(404).json({ message: "Watchlist not found" });
-    res.status(204).send();
+
+    const result = await db.collection("watchlists").replaceOne(
+      { _id: new ObjectId(req.params.id) },
+      {
+        ...value,
+        updatedAt: new Date(),
+      },
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({
+        message: "Watchlist not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Watchlist updated successfully",
+    });
   } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error updating watchlist", error: err.message });
+    res.status(500).json({
+      message: "Error updating watchlist",
+      error: err.message,
+    });
   }
 };
 
