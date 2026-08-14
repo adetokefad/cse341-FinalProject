@@ -11,38 +11,34 @@ jest.mock("../middleware/isAuthenticated", () => {
 const request = require("supertest");
 const app = require("../app");
 
-describe("Reviews API (with login)", () => {
+describe("Reviews API", () => {
   let agent;
 
-  beforeAll(async () => {
+  beforeAll(() => {
     agent = request.agent(app);
-
-    // Login inside async beforeAll
-    const loginRes = await agent
-      .post("/login")
-      .send({ username: "testuser", password: "testpass" });
-
-    expect(loginRes.statusCode).toBe(200); // login should succeed
   });
 
   test("GET /reviews/:id should return a single review", async () => {
     // Step 1: Create a new review
     const createRes = await agent.post("/reviews").send({
-      title: "Test Movie",
-      genre: "Drama",
-      year: 2024,
+      movieId: "testMovieId",
+      userId: "testUserId",
+      rating: 8,
+      reviewText: "This is a great movie!",
     });
 
     expect(createRes.statusCode).toBe(201);
-    expect(createRes.body).toHaveProperty("_id");
+    expect(createRes.body).toHaveProperty("id");
 
-    const reviewId = createRes.body._id;
-    console.log("Created review ID:", reviewId);
+    const reviewId = createRes.body.id;
 
     // Step 2: Fetch the review by its ID
     const getRes = await agent.get(`/reviews/${reviewId}`);
 
     expect(getRes.statusCode).toBe(200);
-    expect(getRes.body).toHaveProperty("title", "Test Movie");
+    expect(getRes.body).toHaveProperty("movieId", "testMovieId");
+    expect(getRes.body).toHaveProperty("userId", "testUserId");
+    expect(getRes.body).toHaveProperty("rating", 8);
+    expect(getRes.body).toHaveProperty("reviewText", "This is a great movie!");
   });
 });
